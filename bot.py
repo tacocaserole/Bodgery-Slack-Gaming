@@ -1,4 +1,3 @@
-import os
 import yaml
 import random
 import re
@@ -60,7 +59,7 @@ def error_handler(err):
 
 # Start the server
 slack_events_adapter.start(
-    host='10.0.1.5',
-    port=os.environ['SLACKBOT_EVENTS_PORT'],
+    host=CONF["host"],
+    port=CONF["port"],
     #debug=True,
 )
