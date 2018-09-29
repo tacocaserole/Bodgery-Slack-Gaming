@@ -8,7 +8,7 @@ class DiceTooBigException(Exception):
 class TooManyDiceException(Exception):
     def __init__( self, asked_dice, max_allowed_dice ):
         self.asked_dice = asked_dice
-        self.max_allowed_size = max_allowed_dice
+        self.max_allowed_dice = max_allowed_dice
 
 class DiceRoll:
     def __init__( self, max_dice=128, max_size=1024 ):

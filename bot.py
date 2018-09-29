@@ -1,3 +1,4 @@
+import diceroll
 import yaml
 import random
 import re
@@ -39,13 +40,13 @@ def handle_message(event_data):
         size_dice = int( match.group(2) )
 
         return_msg = ""
-        if num_dice > CONF["max_dice"]:
-            return_msg = "<@%s> Sorry, I can only handle up to %s dice at once" %( message["user"], CONF["max_dice"] )
-        elif size_dice > CONF["max_dice_size"]:
-            return_msg = "<@%s> Sorry, I can only handle up to %s sized dice" %( message["user"], CONF["max_dice_size"] )
-        else:
-            rolls = roll_dice( size_dice, num_dice )
-            sum_rolls = sum(rolls)
+        try:
+            dice = diceroll.DiceRoll(
+                max_dice=CONF['max_dice'],
+                max_size=CONF['max_dice_size'],
+            )
+            rolls = dice.roll( size_dice, num_dice )
+            sum_rolls = sum( rolls )
 
             roll_sep = ", "
             roll_str = roll_sep.join( list(map( lambda x: str(x), rolls )) )
@@ -54,7 +55,11 @@ def handle_message(event_data):
                 roll_str,
                 sum_rolls,
             )
-
+        except diceroll.DiceTooBigException as e:
+            return_msg = "<@%s> Sorry, I can only handle up to %s sized dice" %( message["user"], e.max_allowed_size )
+        except diceroll.TooManyDiceException as e:
+            return_msg = "<@%s> Sorry, I can only handle up to %s dice at once" %( message["user"], e.max_allowed_dice )
+            
         slack_client.api_call("chat.postMessage", channel=channel, text=return_msg)
 
 
