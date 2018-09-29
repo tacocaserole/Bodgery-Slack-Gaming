@@ -1,15 +1,23 @@
 import os
+import yaml
 import random
 import re
 from slackeventsapi import SlackEventAdapter
 from slackclient import SlackClient
 
 
+def get_config( conf_file ):
+    with open( conf_file ) as x: conf_str = x.read()
+    conf = yaml.load( conf_str )
+    return conf
+
+
+CONF = get_config( "config.yaml" )
 slack_events_adapter = SlackEventAdapter(
-    os.environ['SLACK_SIGNING_SECRET']
-    ,endpoint="/slack/events"
+    CONF["slack_signing_secret"],
+    endpoint="/slack/events"
 )
-slack_client = SlackClient( os.environ["SLACK_BOT_TOKEN"] )
+slack_client = SlackClient( CONF["slack_bot_token"] )
 
 roll_match = re.compile( "roll (\d+)?d(\d+)" )
 
@@ -47,6 +55,7 @@ def handle_message(event_data):
 @slack_events_adapter.on("error")
 def error_handler(err):
     print("ERROR: " + str(err))
+
 
 
 # Start the server

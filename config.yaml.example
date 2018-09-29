@@ -1,0 +1,17 @@
+# Slack signing and bot secrets
+#
+# DO NOT COMMIT THESE TO GIT
+slack_signing_secret: xxxx
+slack_bot_token: xxxx
+
+# The port number that the server will run on
+port: 3000
+
+# Host that the events adaptor will attach itself to
+host: 10.0.1.5
+
+# Max number of dice allowed to roll at once
+max_dice: 100
+
+# Max dice roll size
+max_dice_size: 4294967295
