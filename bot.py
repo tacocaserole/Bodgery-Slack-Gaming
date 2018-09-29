@@ -38,16 +38,23 @@ def handle_message(event_data):
         num_dice = 1 if num_dice is None else int( num_dice )
         size_dice = int( match.group(2) )
 
-        rolls = roll_dice( size_dice, num_dice )
-        sum_rolls = sum(rolls)
+        return_msg = ""
+        if num_dice > CONF["max_dice"]:
+            return_msg = "<@%s> Sorry, I can only handle up to %s dice at once" %( message["user"], CONF["max_dice"] )
+        elif size_dice > CONF["max_dice_size"]:
+            return_msg = "<@%s> Sorry, I can only handle up to %s sized dice" %( message["user"], CONF["max_dice_size"] )
+        else:
+            rolls = roll_dice( size_dice, num_dice )
+            sum_rolls = sum(rolls)
 
-        roll_sep = ", "
-        roll_str = roll_sep.join( list(map( lambda x: str(x), rolls )) )
-        return_msg = "<@%s> rolled %s (total %s)" %(
-            message["user"],
-            roll_str,
-            sum_rolls,
-        )
+            roll_sep = ", "
+            roll_str = roll_sep.join( list(map( lambda x: str(x), rolls )) )
+            return_msg = "<@%s> rolled %s (total %s)" %(
+                message["user"],
+                roll_str,
+                sum_rolls,
+            )
+
         slack_client.api_call("chat.postMessage", channel=channel, text=return_msg)
 
 
