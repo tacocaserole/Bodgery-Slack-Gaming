@@ -5,24 +5,27 @@ from slackclient import SlackClient
 
 slack_events_adapter = SlackEventAdapter(
     os.environ['SLACK_SIGNING_SECRET']
+    ,endpoint="/slack/events"
 )
-
-slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
-slack_client = SlackClient(
-    slack_bot_token
-    , endpoint="/sack/events"
-)
+slack_client = SlackClient( os.environ["SLACK_BOT_TOKEN"] )
 
 
-# Create an event listener for "reaction_added" events and print the emoji name
-@slack_events_adapter.on("reaction_added")
-def reaction_added(event):
-    emoji = event.get("reaction")
-    print(emoji)
+@slack_events_adapter.on("app_mention")
+def handle_message(event_data):
+    message = event_data["event"]
+    channel = message["channel"]
+    message = "Hello <@%s>! :tada:" % message["user"]
+    slack_client.api_call("chat.postMessage", channel=channel, text=message)
 
 
-# Start the server on port
+@slack_events_adapter.on("error")
+def error_handler(err):
+    print("ERROR: " + str(err))
+
+
+# Start the server
 slack_events_adapter.start(
     host='10.0.1.5'
     ,port=os.environ['SLACKBOT_EVENTS_PORT']
+    #,debug=True
 )

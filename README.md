@@ -25,3 +25,5 @@ A Slackbot for managing D&D character sheets, and allowing die rolls.
 14. Turn it on, and set the URL to:
     https://XXXX.shop.thebodgery.org/slack/events
     Replacing 'XXXX' with your assigned URL prefix
+15. Under "Subscribe to Bot Events", set "app_mention"
+16. Hit "Save Changes"
