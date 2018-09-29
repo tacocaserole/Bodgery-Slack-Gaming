@@ -37,9 +37,9 @@ def handle_message(event_data):
         roll_sep = ", "
         roll_str = roll_sep.join( list(map( lambda x: str(x), rolls )) )
         return_msg = "<@%s> rolled %s (total %s)" %(
-            message["user"]
-            ,roll_str
-            ,sum_rolls
+            message["user"],
+            roll_str,
+            sum_rolls,
         )
         slack_client.api_call("chat.postMessage", channel=channel, text=return_msg)
 
@@ -51,7 +51,7 @@ def error_handler(err):
 
 # Start the server
 slack_events_adapter.start(
-    host='10.0.1.5'
-    ,port=os.environ['SLACKBOT_EVENTS_PORT']
-    #,debug=True
+    host='10.0.1.5',
+    port=os.environ['SLACKBOT_EVENTS_PORT'],
+    #debug=True,
 )
