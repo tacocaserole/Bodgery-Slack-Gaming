@@ -9,12 +9,14 @@ class MockHandler( mentionrouter.Handler ):
         self.last_seen_to_user = None
         self.last_seen_cmd = None
         self.last_seen_remaining_msg = None
+        self.last_seen_channel = None
 
-    def handle_mention( self, from_user, to_user, cmd, remaining_msg ):
+    def handle_mention( self, from_user, to_user, cmd, remaining_msg, channel ):
         self.last_seen_from_user = from_user
         self.last_seen_to_user = to_user
         self.last_seen_cmd = cmd
         self.last_seen_remaining_msg = remaining_msg
+        self.last_seen_channel = channel
  
 class TestMentionRouter(unittest.TestCase):
     '''routes messages to callbacks based on mentions'''
@@ -38,6 +40,8 @@ class TestMentionRouter(unittest.TestCase):
             "Passed cmd" );
         self.assertEqual( handler.last_seen_remaining_msg, "do thing",
             "Passed remaining msg" );
+        self.assertEqual( handler.last_seen_channel, "C0LATF2Q",
+            "Passed channel" );
         self.assertIsNone( last_resort_handler.last_seen_cmd,
             "Did not hit last resort handler" )
 

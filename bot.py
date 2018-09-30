@@ -1,4 +1,5 @@
 import diceroll
+import mentionrouter
 import yaml
 import random
 import re
@@ -19,49 +20,20 @@ slack_events_adapter = SlackEventAdapter(
 )
 slack_client = SlackClient( CONF["slack_bot_token"] )
 
-roll_match = re.compile( "roll (\d+)?d(\d+)" )
+mention_router = mentionrouter.Router()
+mention_router.register( "roll",
+    diceroll.DiceRollHandler( CONF["max_dice"], CONF["max_dice_size"], slack_client )
+)
 
-random.seed()
-
-
-def roll_dice( size_dice, num_dice=1 ):
-    rolls = map( lambda x: random.randint( 1, size_dice ), range(num_dice) )
-    return list(rolls)
 
 @slack_events_adapter.on("app_mention")
 def handle_message(event_data):
     message = event_data["event"]
-    channel = message["channel"]
-
-    match = roll_match.search( message.get( 'text' ) )
-    #print( "Message text: <%s>" %( message.get( 'text' ) ) )
-    if match is not None:
-        num_dice = match.group(1)
-        num_dice = 1 if num_dice is None else int( num_dice )
-        size_dice = int( match.group(2) )
-
-        return_msg = ""
-        try:
-            dice = diceroll.DiceRoll(
-                max_dice=CONF['max_dice'],
-                max_size=CONF['max_dice_size'],
-            )
-            rolls = dice.roll( size_dice, num_dice )
-            sum_rolls = sum( rolls )
-
-            roll_sep = ", "
-            roll_str = roll_sep.join( list(map( lambda x: str(x), rolls )) )
-            return_msg = "<@%s> rolled %s (total %s)" %(
-                message["user"],
-                roll_str,
-                sum_rolls,
-            )
-        except diceroll.DiceTooBigException as e:
-            return_msg = "<@%s> Sorry, I can only handle up to %s sized dice" %( message["user"], e.max_allowed_size )
-        except diceroll.TooManyDiceException as e:
-            return_msg = "<@%s> Sorry, I can only handle up to %s dice at once" %( message["user"], e.max_allowed_dice )
-            
-        slack_client.api_call("chat.postMessage", channel=channel, text=return_msg)
+    mention_router.handle_mention(
+        user = message['user'],
+        text = message['text'],
+        channel = message['channel'],
+    )
 
 
 @slack_events_adapter.on("error")

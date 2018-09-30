@@ -10,11 +10,11 @@ trim_trailing_whitespace = re.compile( '\s*$' )
 
 class Handler:
     @abstractmethod
-    def handle_mention( self, from_user, to_user, cmd, remaining_msg ):
+    def handle_mention( self, from_user, to_user, cmd, remaining_msg, channel ):
         pass
 
 class DefaultLastResortRouter( Handler ):
-    def handle_mention( self, from_user, to_user, cmd, remaining_msg ):
+    def handle_mention( self, from_user, to_user, cmd, remaining_msg, channel ):
         # TODO message failure back to the user
         pass
 
@@ -25,13 +25,14 @@ class Router:
 
     def set_last_resort_handler( handler ):
         self.last_resort_handler = handler
+
     def register( self, cmd, handler ):
         self.cmds[cmd] = handler
 
     def handle_mention( self, user, text, channel ):
         to_user, cmd, remaining_msg = self._parse_msg( text )
         handler = self.cmds[cmd] if cmd in self.cmds else self.last_resort_handler
-        handler.handle_mention( user, to_user, cmd, remaining_msg )
+        handler.handle_mention( user, to_user, cmd, remaining_msg, channel )
 
     def _parse_msg( self, msg ):
         to_user_match = match_to_user_msg.search( msg )
