@@ -1,5 +1,6 @@
 import unittest
 import diceroll
+import mentionrouter
 
 class TestLoad(unittest.TestCase):
     '''ensure we can load our classes'''

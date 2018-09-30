@@ -34,6 +34,7 @@ def handle_message(event_data):
     channel = message["channel"]
 
     match = roll_match.search( message.get( 'text' ) )
+    #print( "Message text: <%s>" %( message.get( 'text' ) ) )
     if match is not None:
         num_dice = match.group(1)
         num_dice = 1 if num_dice is None else int( num_dice )
