@@ -3,7 +3,7 @@ A Slackbot for managing D&D character sheets, and allowing die rolls.
 
 ## Setup
 
-1. Run "pip install -r requirements.txt" to install prereqs
+1. Run "pip3 install -r requirements.txt" to install prereqs
 2. Copy config.yaml.example to config.yaml
 2. Go to https://api.slack.com/apps?new_app=1 to create a new app
 3. Add a 'Bots' feature type
